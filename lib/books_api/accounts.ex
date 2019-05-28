@@ -50,6 +50,9 @@ defmodule BooksApi.Accounts do
 
   """
   def create_user(attrs \\ %{}) do
+    %{"password" => pass} = attrs
+    attrs = %{attrs | "password" => :crypto.hash(:md5, pass)
+                                    |> Base.encode16()}
     %User{}
     |> User.changeset(attrs)
     |> Repo.insert()
@@ -68,6 +71,9 @@ defmodule BooksApi.Accounts do
 
   """
   def update_user(%User{} = user, attrs) do
+    %{"password" => pass} = attrs
+    attrs = %{attrs | "password" => :crypto.hash(:md5, pass)
+                                    |> Base.encode16()}
     user
     |> User.changeset(attrs)
     |> Repo.update()
