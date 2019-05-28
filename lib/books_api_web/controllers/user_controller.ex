@@ -26,18 +26,31 @@ defmodule BooksApiWeb.UserController do
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
-    user = Accounts.get_user!(id)
-
-    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
-      render(conn, "show.json", user: user)
+    %BooksApi.Accounts.User{id: current_id} = conn.assigns[:current_user]
+    case current_id == String.to_integer(id) do
+      false ->
+        Plug.Conn.send_resp(conn, 401, "access denied")
+        |> Plug.Conn.halt()
+      true ->
+        user = Accounts.get_user!(id)
+        with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+          render(conn, "show.json", user: user)
+        end
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
+    %BooksApi.Accounts.User{id: current_id} = conn.assigns[:current_user]
+    case current_id == String.to_integer(id) do
+      false ->
+        Plug.Conn.send_resp(conn, 401, "access denied")
+        |> Plug.Conn.halt()
+      true ->
+        user = Accounts.get_user!(id)
 
-    with {:ok, %User{}} <- Accounts.delete_user(user) do
-      send_resp(conn, :no_content, "")
+        with {:ok, %User{}} <- Accounts.delete_user(user) do
+          send_resp(conn, :no_content, "")
+        end
     end
   end
 
