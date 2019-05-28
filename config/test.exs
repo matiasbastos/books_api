@@ -12,7 +12,7 @@ config :logger, level: :warn
 # Configure your database
 config :books_api, BooksApi.Repo,
   username: "root",
-  password: "",
+  password: "password",
   database: "books_api_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox

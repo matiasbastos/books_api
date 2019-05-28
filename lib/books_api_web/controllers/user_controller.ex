@@ -40,4 +40,13 @@ defmodule BooksApiWeb.UserController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  def find_by_username_and_password(conn, user, pass) do
+    res = Accounts.validate_user(user, pass)
+    case res do
+      nil -> Plug.Conn.halt(conn)
+      %BooksApi.Accounts.User{} -> 
+        Plug.Conn.assign(conn, :current_user, res)
+    end
+  end
 end

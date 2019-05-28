@@ -5,7 +5,8 @@ defmodule BooksApiWeb.MethodControllerTest do
   alias BooksApi.Accounts.Method
 
   @create_attrs %{
-    method: "some method"
+    method: "some method",
+    user_id: 1
   }
   @update_attrs %{
     method: "some updated method"

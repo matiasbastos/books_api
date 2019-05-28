@@ -9,6 +9,23 @@ defmodule BooksApi.Accounts do
   alias BooksApi.Accounts.User
 
   @doc """
+  Hashes password
+  """
+  def hash_password(pass) do
+    :crypto.hash(:md5, pass)
+    |> Base.encode16()
+  end
+
+  @doc """
+  Validates user and password.
+  """
+  def validate_user(user, pass) do
+    Repo.one(Ecto.Query.from u in User,
+             where: u.username == ^user,
+             where: u.password == ^hash_password(pass))
+  end
+
+  @doc """
   Returns the list of users.
 
   ## Examples
@@ -51,8 +68,7 @@ defmodule BooksApi.Accounts do
   """
   def create_user(attrs \\ %{}) do
     %{"password" => pass} = attrs
-    attrs = %{attrs | "password" => :crypto.hash(:md5, pass)
-                                    |> Base.encode16()}
+    attrs = %{attrs | "password" => hash_password(pass)}
     %User{}
     |> User.changeset(attrs)
     |> Repo.insert()
@@ -72,8 +88,7 @@ defmodule BooksApi.Accounts do
   """
   def update_user(%User{} = user, attrs) do
     %{"password" => pass} = attrs
-    attrs = %{attrs | "password" => :crypto.hash(:md5, pass)
-                                    |> Base.encode16()}
+    attrs = %{attrs | "password" => hash_password(pass)}
     user
     |> User.changeset(attrs)
     |> Repo.update()
