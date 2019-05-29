@@ -6,6 +6,8 @@ defmodule BooksApiWeb.BookController do
 
   action_fallback BooksApiWeb.FallbackController
 
+  plug BooksApiWeb.Plugs.CheckMethod when action in [:create, :update, :delete]
+
   def index(conn, _params) do
     books = Books.list_books()
     render(conn, "index.json", books: books)

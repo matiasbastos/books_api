@@ -6,6 +6,8 @@ defmodule BooksApiWeb.MethodController do
 
   action_fallback BooksApiWeb.FallbackController
 
+  plug BooksApiWeb.Plugs.CheckMethod when action in [:update, :delete]
+
   def index(conn, _params) do
     methods = Accounts.list_methods()
     render(conn, "index.json", methods: methods)

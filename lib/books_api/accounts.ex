@@ -126,6 +126,15 @@ defmodule BooksApi.Accounts do
   alias BooksApi.Accounts.Method
 
   @doc """
+  Validates user and method.
+  """
+  def validate_method(user_id, method) do
+    Repo.one(Ecto.Query.from m in Method,
+             where: m.method == ^method,
+             where: m.user_id == ^user_id)
+  end
+
+  @doc """
   Returns the list of methods.
 
   ## Examples
